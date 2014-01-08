@@ -3,4 +3,50 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/rootblock_default_bg" />
+
+    <com.coco.slidinguppanel.SlidingUpPanel
+        android:id="@+id/sliding_up_panel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/cover_default" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:src="@drawable/cover_zaker_logo" />
+
+            <ImageView
+                android:id="@+id/cover_down"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_margin="10dp"
+                android:src="@drawable/selector_cover_down" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|bottom"
+                android:layout_margin="10dp"
+                android:text="@string/cover_hint"
+                android:textColor="#fff"
+                android:textSize="22sp" />
+        </FrameLayout>
+    </com.coco.slidinguppanel.SlidingUpPanel>
+
 </FrameLayout>
