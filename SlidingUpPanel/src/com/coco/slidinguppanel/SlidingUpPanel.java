@@ -177,7 +177,7 @@ public class SlidingUpPanel extends ViewGroup {
 			final int height = getHeight();
 			float offset = 0f;
 			if (height > 0) {
-				offset = Math.min(0f, Math.max(1f, Math.abs(scrollY / height)));
+				offset = Math.max(0f, Math.min(1f, Math.abs(scrollY / height)));
 			}
 			mOnPanelScrollListener.onPanelScrolled(offset);
 		}

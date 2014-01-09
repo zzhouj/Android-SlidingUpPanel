@@ -2,6 +2,7 @@ package com.coco.slidinguppanel.test;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -11,8 +12,11 @@ import android.widget.Toast;
 import com.coco.slidinguppanel.SlidingUpPanel;
 import com.coco.slidinguppanel.SlidingUpPanel.OnPanelCloseListener;
 import com.coco.slidinguppanel.SlidingUpPanel.OnPanelOpenListener;
+import com.coco.slidinguppanel.SlidingUpPanel.OnPanelScrollListener;
 
 public class SlidingUpPanelTestActivity extends Activity {
+
+	private static final String TAG = "SlidingUpPanelTestActivity";
 
 	private SlidingUpPanel mSlidingUpPanel;
 	private ImageView mCoverDown;
@@ -34,6 +38,12 @@ public class SlidingUpPanelTestActivity extends Activity {
 			@Override
 			public void onPanelClosed() {
 				showToast("Sliding up panel closed!");
+			}
+		});
+		mSlidingUpPanel.setOnPanelScrolledListener(new OnPanelScrollListener() {
+			@Override
+			public void onPanelScrolled(float offset) {
+				Log.d(TAG, "onPanelScrolled offset=" + offset);
 			}
 		});
 
