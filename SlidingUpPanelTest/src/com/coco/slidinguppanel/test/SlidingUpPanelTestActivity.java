@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +23,7 @@ public class SlidingUpPanelTestActivity extends Activity {
 	private SlidingUpPanel mSlidingUpPanel;
 	private ImageView mCoverDown;
 	private TextView mCoverHint;
+	private Button mClickToClose;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +34,7 @@ public class SlidingUpPanelTestActivity extends Activity {
 		mSlidingUpPanel = (SlidingUpPanel) findViewById(R.id.sliding_up_panel);
 		mCoverDown = (ImageView) findViewById(R.id.cover_down);
 		mCoverHint = (TextView) findViewById(R.id.cover_hint);
+		mClickToClose = (Button) findViewById(R.id.click_to_close);
 
 		mSlidingUpPanel.setOnPanelOpenListener(new OnPanelOpenListener() {
 			@Override
@@ -57,6 +60,13 @@ public class SlidingUpPanelTestActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				showToast("Cover down pressed!");
+			}
+		});
+
+		mClickToClose.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mSlidingUpPanel.closePanel();
 			}
 		});
 	}

@@ -9,6 +9,13 @@
         android:scaleType="centerCrop"
         android:src="@drawable/rootblock_default_bg" />
 
+    <Button
+        android:id="@+id/click_to_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Click to close" />
+
     <com.coco.slidinguppanel.SlidingUpPanel
         android:id="@+id/sliding_up_panel"
         android:layout_width="match_parent"

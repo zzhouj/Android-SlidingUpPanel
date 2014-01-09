@@ -37,8 +37,8 @@ public class SlidingUpPanel extends ViewGroup {
 	private static final int INVALID_POINTER = -1;
 
 	// states
-	public static final int STATE_CLOSE = 0;
-	public static final int STATE_OPEN = 1;
+	public static final int STATE_CLOSED = 0;
+	public static final int STATE_OPENED = 1;
 	public static final int STATE_DRAGGING = 2;
 	public static final int STATE_FLING = 3;
 
@@ -60,7 +60,7 @@ public class SlidingUpPanel extends ViewGroup {
 	private int mActivePointerId = INVALID_POINTER;
 
 	// state & listener
-	private int mState = STATE_CLOSE;
+	private int mState = STATE_CLOSED;
 	private boolean mIsOpen = false;
 	private OnPanelCloseListener mOnPanelCloseListener;
 	private OnPanelOpenListener mOnPanelOpenListener;
@@ -72,7 +72,7 @@ public class SlidingUpPanel extends ViewGroup {
 
 	private final Runnable mEndScrollRunnable = new Runnable() {
 		public void run() {
-			setState(mIsOpen ? STATE_OPEN : STATE_CLOSE);
+			setState(mIsOpen ? STATE_OPENED : STATE_CLOSED);
 		}
 	};
 
@@ -156,11 +156,11 @@ public class SlidingUpPanel extends ViewGroup {
 		enableLayers(isDraggingOrFling);
 		setScrollingCacheEnabled(isDraggingOrFling);
 
-		if (mState == STATE_CLOSE) {
+		if (mState == STATE_CLOSED) {
 			if (mOnPanelCloseListener != null) {
 				mOnPanelCloseListener.onPanelClosed();
 			}
-		} else if (mState == STATE_OPEN) {
+		} else if (mState == STATE_OPENED) {
 			if (mOnPanelOpenListener != null) {
 				mOnPanelOpenListener.onPanelOpened();
 			}
@@ -169,6 +169,12 @@ public class SlidingUpPanel extends ViewGroup {
 
 	public boolean isOpen() {
 		return mIsOpen;
+	}
+
+	public void closePanel() {
+		if (isOpen()) {
+			startFling(false, 0);
+		}
 	}
 
 	public void setOnPanelCloseListener(OnPanelCloseListener onPanelCloseListener) {
@@ -333,6 +339,11 @@ public class SlidingUpPanel extends ViewGroup {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
+		if (getState() == STATE_OPENED) {
+			// disable touch handle when in opened state.
+			return false;
+		}
+
 		final int action = MotionEventCompat.getActionMasked(ev);
 
 		if (action == MotionEvent.ACTION_DOWN && ev.getEdgeFlags() != 0) {
@@ -585,7 +596,7 @@ public class SlidingUpPanel extends ViewGroup {
 
 		if ((dx == 0 && dy == 0) || height == 0) {
 			completeScroll(false);
-			setState(mIsOpen ? STATE_OPEN : STATE_CLOSE);
+			setState(mIsOpen ? STATE_OPENED : STATE_CLOSED);
 			return;
 		}
 
