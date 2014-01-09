@@ -9,8 +9,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.coco.slidinguppanel.SlidingUpPanel;
-import com.coco.slidinguppanel.SlidingUpPanel.OnCloseListener;
-import com.coco.slidinguppanel.SlidingUpPanel.OnOpenListener;
+import com.coco.slidinguppanel.SlidingUpPanel.OnPanelCloseListener;
+import com.coco.slidinguppanel.SlidingUpPanel.OnPanelOpenListener;
 
 public class SlidingUpPanelTestActivity extends Activity {
 
@@ -24,15 +24,15 @@ public class SlidingUpPanelTestActivity extends Activity {
 		setContentView(R.layout.sliding_up_panel_test);
 
 		mSlidingUpPanel = (SlidingUpPanel) findViewById(R.id.sliding_up_panel);
-		mSlidingUpPanel.setOnOpenListener(new OnOpenListener() {
+		mSlidingUpPanel.setOnPanelOpenListener(new OnPanelOpenListener() {
 			@Override
-			public void onOpen() {
+			public void onPanelOpened() {
 				showToast("Sliding up panel opened!");
 			}
 		});
-		mSlidingUpPanel.setOnCloseListener(new OnCloseListener() {
+		mSlidingUpPanel.setOnPanelCloseListener(new OnPanelCloseListener() {
 			@Override
-			public void onClose() {
+			public void onPanelClosed() {
 				showToast("Sliding up panel closed!");
 			}
 		});

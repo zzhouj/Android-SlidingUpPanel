@@ -61,8 +61,9 @@ public class SlidingUpPanel extends ViewGroup {
 	// state & listener
 	private int mState = STATE_CLOSE;
 	private boolean mIsOpen = false;
-	private OnCloseListener mOnCloseListener;
-	private OnOpenListener mOnOpenListener;
+	private OnPanelCloseListener mOnPanelCloseListener;
+	private OnPanelOpenListener mOnPanelOpenListener;
+	private OnPanelScrollListener mOnPanelScrollListener;
 
 	private final Runnable mEndScrollRunnable = new Runnable() {
 		public void run() {
@@ -73,15 +74,28 @@ public class SlidingUpPanel extends ViewGroup {
 	/**
 	 * Callback interface for responding to the open state of the sliding up panel.
 	 */
-	public interface OnOpenListener {
-		public void onOpen();
+	public interface OnPanelOpenListener {
+		public void onPanelOpened();
 	}
 
 	/**
 	 * Callback interface for responding to the close state of the sliding up panel.
 	 */
-	public interface OnCloseListener {
-		public void onClose();
+	public interface OnPanelCloseListener {
+		public void onPanelClosed();
+	}
+
+	/**
+	 * Callback interface for responding to scrolling of the panel.
+	 */
+	public interface OnPanelScrollListener {
+		/**
+		 * This method will be invoked when the panel is scrolled.
+		 * 
+		 * @param offset
+		 *            Value from [0, 1] indicating the offset of the scrolling panel.
+		 */
+		public void onPanelScrolled(float offset);
 	}
 
 	public SlidingUpPanel(Context context, AttributeSet attrs, int defStyle) {
@@ -121,23 +135,23 @@ public class SlidingUpPanel extends ViewGroup {
 		super.onDetachedFromWindow();
 	}
 
-	public int getState() {
+	protected int getState() {
 		return mState;
 	}
 
-	private void setState(int newState) {
+	protected void setState(int newState) {
 		if (mState == newState) {
 			return;
 		}
 		DEBUG_LOG("setState " + mState + " ==> " + newState);
 		mState = newState;
 		if (mState == STATE_CLOSE) {
-			if (mOnCloseListener != null) {
-				mOnCloseListener.onClose();
+			if (mOnPanelCloseListener != null) {
+				mOnPanelCloseListener.onPanelClosed();
 			}
 		} else if (mState == STATE_OPEN) {
-			if (mOnOpenListener != null) {
-				mOnOpenListener.onOpen();
+			if (mOnPanelOpenListener != null) {
+				mOnPanelOpenListener.onPanelOpened();
 			}
 		}
 	}
@@ -146,12 +160,27 @@ public class SlidingUpPanel extends ViewGroup {
 		return mIsOpen;
 	}
 
-	public void setOnCloseListener(OnCloseListener onCloseListener) {
-		mOnCloseListener = onCloseListener;
+	public void setOnPanelCloseListener(OnPanelCloseListener onPanelCloseListener) {
+		mOnPanelCloseListener = onPanelCloseListener;
 	}
 
-	public void setOnOpenListener(OnOpenListener onOpenListener) {
-		mOnOpenListener = onOpenListener;
+	public void setOnPanelOpenListener(OnPanelOpenListener onPanelOpenListener) {
+		mOnPanelOpenListener = onPanelOpenListener;
+	}
+
+	public void setOnPanelScrolledListener(OnPanelScrollListener onPanelScrollListener) {
+		mOnPanelScrollListener = onPanelScrollListener;
+	}
+
+	protected void onPanelScrolled(float scrollY) {
+		if (mOnPanelScrollListener != null) {
+			final int height = getHeight();
+			float offset = 0f;
+			if (height > 0) {
+				offset = Math.min(0f, Math.max(1f, Math.abs(scrollY / height)));
+			}
+			mOnPanelScrollListener.onPanelScrolled(offset);
+		}
 	}
 
 	// layout
@@ -461,6 +490,7 @@ public class SlidingUpPanel extends ViewGroup {
 		// Don't lose the rounded component
 		mLastMotionY += scrollY - (int) scrollY;
 		scrollTo(getScrollX(), (int) scrollY);
+		onPanelScrolled(scrollY);
 
 		return needsInvalidate;
 	}
@@ -509,11 +539,13 @@ public class SlidingUpPanel extends ViewGroup {
 			// Nothing to do.
 			return;
 		}
-		int sx = getScrollX();
-		int sy = getScrollY();
-		int dx = x - sx;
-		int dy = y - sy;
-		if (dx == 0 && dy == 0) {
+		final int sx = getScrollX();
+		final int sy = getScrollY();
+		final int dx = x - sx;
+		final int dy = y - sy;
+		final int height = getHeight();
+
+		if ((dx == 0 && dy == 0) || height == 0) {
 			completeScroll(false);
 			setState(mIsOpen ? STATE_OPEN : STATE_CLOSE);
 			return;
@@ -521,7 +553,6 @@ public class SlidingUpPanel extends ViewGroup {
 
 		setState(STATE_FLING);
 
-		final int height = getHeight();
 		final int halfHeight = height / 2;
 		final float distanceRatio = Math.min(1f, 1.0f * Math.abs(dx) / height);
 		final float distance = halfHeight + halfHeight *
@@ -547,6 +578,7 @@ public class SlidingUpPanel extends ViewGroup {
 
 			if (oldX != x || oldY != y) {
 				scrollTo(x, y);
+				onPanelScrolled(y);
 			}
 
 			// Keep on drawing until the animation has finished.
