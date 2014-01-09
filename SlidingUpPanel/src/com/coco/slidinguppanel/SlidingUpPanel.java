@@ -22,6 +22,7 @@ import android.widget.Scroller;
 public class SlidingUpPanel extends ViewGroup {
 	private static final String TAG = "SlidingUpPanel";
 	private static final boolean DEBUG = false;
+	private static final boolean USE_CACHE = false;
 
 	private static void DEBUG_LOG(String msg) {
 		if (DEBUG) {
@@ -65,6 +66,9 @@ public class SlidingUpPanel extends ViewGroup {
 	private OnPanelOpenListener mOnPanelOpenListener;
 	private OnPanelScrollListener mOnPanelScrollListener;
 	private float mLastPanelScrolledOffset;
+
+	// drawing cache
+	private boolean mScrollingCacheEnabled;
 
 	private final Runnable mEndScrollRunnable = new Runnable() {
 		public void run() {
@@ -144,9 +148,14 @@ public class SlidingUpPanel extends ViewGroup {
 		if (mState == newState) {
 			return;
 		}
+
 		DEBUG_LOG("setState " + mState + " ==> " + newState);
 		mState = newState;
-		enableLayers(newState == STATE_DRAGGING || newState == STATE_FLING);
+
+		final boolean isDraggingOrFling = mState == STATE_DRAGGING || mState == STATE_FLING;
+		enableLayers(isDraggingOrFling);
+		setScrollingCacheEnabled(isDraggingOrFling);
+
 		if (mState == STATE_CLOSE) {
 			if (mOnPanelCloseListener != null) {
 				mOnPanelCloseListener.onPanelClosed();
@@ -516,6 +525,21 @@ public class SlidingUpPanel extends ViewGroup {
 			final int layerType = enable ?
 					ViewCompat.LAYER_TYPE_HARDWARE : ViewCompat.LAYER_TYPE_NONE;
 			ViewCompat.setLayerType(getChildAt(i), layerType, null);
+		}
+	}
+
+	private void setScrollingCacheEnabled(boolean enabled) {
+		if (mScrollingCacheEnabled != enabled) {
+			mScrollingCacheEnabled = enabled;
+			if (USE_CACHE) {
+				final int size = getChildCount();
+				for (int i = 0; i < size; ++i) {
+					final View child = getChildAt(i);
+					if (child.getVisibility() != GONE) {
+						child.setDrawingCacheEnabled(enabled);
+					}
+				}
+			}
 		}
 	}
 
