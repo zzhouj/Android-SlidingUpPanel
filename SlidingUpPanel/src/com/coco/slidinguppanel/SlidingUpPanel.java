@@ -146,6 +146,7 @@ public class SlidingUpPanel extends ViewGroup {
 		}
 		DEBUG_LOG("setState " + mState + " ==> " + newState);
 		mState = newState;
+		enableLayers(newState == STATE_DRAGGING || newState == STATE_FLING);
 		if (mState == STATE_CLOSE) {
 			if (mOnPanelCloseListener != null) {
 				mOnPanelCloseListener.onPanelClosed();
@@ -506,6 +507,15 @@ public class SlidingUpPanel extends ViewGroup {
 		if (mVelocityTracker != null) {
 			mVelocityTracker.recycle();
 			mVelocityTracker = null;
+		}
+	}
+
+	private void enableLayers(boolean enable) {
+		final int childCount = getChildCount();
+		for (int i = 0; i < childCount; i++) {
+			final int layerType = enable ?
+					ViewCompat.LAYER_TYPE_HARDWARE : ViewCompat.LAYER_TYPE_NONE;
+			ViewCompat.setLayerType(getChildAt(i), layerType, null);
 		}
 	}
 
