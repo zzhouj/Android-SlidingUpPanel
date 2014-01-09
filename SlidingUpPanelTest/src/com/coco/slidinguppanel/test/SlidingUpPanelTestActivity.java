@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.coco.slidinguppanel.SlidingUpPanel;
@@ -20,6 +21,7 @@ public class SlidingUpPanelTestActivity extends Activity {
 
 	private SlidingUpPanel mSlidingUpPanel;
 	private ImageView mCoverDown;
+	private TextView mCoverHint;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +30,9 @@ public class SlidingUpPanelTestActivity extends Activity {
 		setContentView(R.layout.sliding_up_panel_test);
 
 		mSlidingUpPanel = (SlidingUpPanel) findViewById(R.id.sliding_up_panel);
+		mCoverDown = (ImageView) findViewById(R.id.cover_down);
+		mCoverHint = (TextView) findViewById(R.id.cover_hint);
+
 		mSlidingUpPanel.setOnPanelOpenListener(new OnPanelOpenListener() {
 			@Override
 			public void onPanelOpened() {
@@ -44,10 +49,10 @@ public class SlidingUpPanelTestActivity extends Activity {
 			@Override
 			public void onPanelScrolled(float offset) {
 				Log.d(TAG, "onPanelScrolled offset=" + offset);
+				mCoverDown.setAlpha((int) ((1f - offset) * 255));
 			}
 		});
 
-		mCoverDown = (ImageView) findViewById(R.id.cover_down);
 		mCoverDown.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {

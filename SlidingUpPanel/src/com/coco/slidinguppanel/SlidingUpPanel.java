@@ -64,6 +64,7 @@ public class SlidingUpPanel extends ViewGroup {
 	private OnPanelCloseListener mOnPanelCloseListener;
 	private OnPanelOpenListener mOnPanelOpenListener;
 	private OnPanelScrollListener mOnPanelScrollListener;
+	private float mLastPanelScrolledOffset;
 
 	private final Runnable mEndScrollRunnable = new Runnable() {
 		public void run() {
@@ -179,7 +180,10 @@ public class SlidingUpPanel extends ViewGroup {
 			if (height > 0) {
 				offset = Math.max(0f, Math.min(1f, Math.abs(scrollY / height)));
 			}
-			mOnPanelScrollListener.onPanelScrolled(offset);
+			if (Math.abs(mLastPanelScrolledOffset - offset) > 0.009f) {
+				mLastPanelScrolledOffset = offset;
+				mOnPanelScrollListener.onPanelScrolled(offset);
+			}
 		}
 	}
 
