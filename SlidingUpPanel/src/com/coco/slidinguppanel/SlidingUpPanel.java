@@ -53,7 +53,7 @@ public class SlidingUpPanel extends ViewGroup {
 		}
 	}
 
-	private static final int MAX_SETTLE_DURATION = 600; // ms
+	private static final int MAX_SETTLE_DURATION = 900; // ms
 	private static final int MIN_DISTANCE_FOR_FLING = 25; // dips
 	private static final int MIN_FLING_VELOCITY = 400; // dips
 
@@ -626,7 +626,7 @@ public class SlidingUpPanel extends ViewGroup {
 		setState(STATE_FLING);
 
 		final int halfHeight = height / 2;
-		final float distanceRatio = Math.min(1f, 1.0f * Math.abs(dx) / height);
+		final float distanceRatio = Math.min(1f, 1.0f * Math.abs(dy) / height);
 		final float distance = halfHeight + halfHeight *
 				distanceInfluenceForSnapDuration(distanceRatio);
 
@@ -635,6 +635,11 @@ public class SlidingUpPanel extends ViewGroup {
 		velocity = Math.max(velocity, mMinimumVelocity);
 		duration = 4 * Math.round(1000 * Math.abs(distance / velocity));
 		duration = Math.min(duration, MAX_SETTLE_DURATION);
+
+		DEBUG_LOG("smoothScrollTo x" + x + ", y=" + y +
+				", velocity=" + velocity +
+				", distance=" + distance +
+				", duration=" + duration);
 
 		mScroller.startScroll(sx, sy, dx, dy, duration);
 		ViewCompat.postInvalidateOnAnimation(this);
