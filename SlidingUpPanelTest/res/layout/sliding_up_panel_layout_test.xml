@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Button1" />
+
+    <com.coco.slidinguppanel.SlidingUpPanel
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#aaa"
+        android:padding="20dp" >
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="40dp"
+            android:text="Button2" />
+    </com.coco.slidinguppanel.SlidingUpPanel>
+
+    <com.coco.slidinguppanel.SlidingUpPanel
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#bbb"
+        android:padding="10dp" >
+    </com.coco.slidinguppanel.SlidingUpPanel>
+
+    <com.coco.slidinguppanel.SlidingUpPanel
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ccc"
+        android:padding="10dp" >
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="Button3" />
+    </com.coco.slidinguppanel.SlidingUpPanel>
+
+    <com.coco.slidinguppanel.SlidingUpPanel
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ddd"
+        android:padding="0dp" >
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="0dp"
+            android:text="Button4" />
+    </com.coco.slidinguppanel.SlidingUpPanel>
+
+    <com.coco.slidinguppanel.SlidingUpPanel
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#eee"
+        android:padding="0dp" >
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp"
+            android:text="Button4" />
+    </com.coco.slidinguppanel.SlidingUpPanel>
+
+</LinearLayout>
