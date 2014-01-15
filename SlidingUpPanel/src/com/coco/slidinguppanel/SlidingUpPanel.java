@@ -305,7 +305,7 @@ public class SlidingUpPanel extends ViewGroup {
 		// Always take care of the touch gesture being complete.
 		if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
 			// Release the drag.
-			DEBUG_LOG("*Intercept done!");
+			DEBUG_LOG("Intercept done!");
 			endDrag();
 			return false;
 		}
@@ -313,11 +313,11 @@ public class SlidingUpPanel extends ViewGroup {
 		// Nothing more to do here if we have decided whether or not we are dragging.
 		if (action != MotionEvent.ACTION_DOWN) {
 			if (mIsBeingDragged) {
-				DEBUG_LOG("*Intercept returning true!");
+				DEBUG_LOG("Intercept returning true!");
 				return true;
 			}
 			if (mIsUnableToDrag) {
-				DEBUG_LOG("*Intercept returning false!");
+				DEBUG_LOG("Intercept returning false!");
 				return false;
 			}
 		}
@@ -326,7 +326,7 @@ public class SlidingUpPanel extends ViewGroup {
 		switch (action) {
 		case MotionEvent.ACTION_DOWN: {
 			onTouchDown(ev);
-			DEBUG_LOG("*Down at " + mLastMotionX + "," + mLastMotionY
+			DEBUG_LOG("***Down at " + mLastMotionX + "," + mLastMotionY
 					+ " mIsBeingDragged=" + mIsBeingDragged
 					+ " mIsUnableToDrag=" + mIsUnableToDrag);
 			break;
@@ -342,7 +342,7 @@ public class SlidingUpPanel extends ViewGroup {
 			final float y = MotionEventCompat.getY(ev, pointerIndex);
 			final float xDiff = Math.abs(x - mInitialMotionX);
 			final float yDiff = Math.abs(y - mInitialMotionY);
-			DEBUG_LOG("*Moved to " + x + "," + y + " diff=" + xDiff + "," + yDiff);
+			DEBUG_LOG("***Moved to " + x + "," + y + " diff=" + xDiff + "," + yDiff);
 			onTouchMove(x, y, xDiff, yDiff);
 			break;
 		}
@@ -413,17 +413,17 @@ public class SlidingUpPanel extends ViewGroup {
 				final int totalDelta = (int) (y - mInitialMotionY);
 				boolean toOpen = determineToOpen(initialVelocity, totalDelta);
 				startFling(toOpen, initialVelocity);
-				DEBUG_LOG("Touch up!!!");
 				endDrag();
 			}
+			DEBUG_LOG("Touch up!!!");
 			break;
 		}
 		case MotionEvent.ACTION_CANCEL: {
 			if (mIsBeingDragged) {
 				startFling(isOpen(), 0);
-				DEBUG_LOG("Touch cancel!!!");
 				endDrag();
 			}
+			DEBUG_LOG("Touch cancel!!!");
 			break;
 		}
 		case MotionEventCompat.ACTION_POINTER_DOWN: {
