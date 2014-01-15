@@ -325,7 +325,7 @@ public class SlidingUpPanel extends ViewGroup {
 		// Check whether the user has moved far enough from his original down touch.
 		switch (action) {
 		case MotionEvent.ACTION_DOWN: {
-			onTouchDown(ev);
+			onTouchDown(ev, true);
 			DEBUG_LOG("***Down at " + mLastMotionX + "," + mLastMotionY
 					+ " mIsBeingDragged=" + mIsBeingDragged
 					+ " mIsUnableToDrag=" + mIsUnableToDrag);
@@ -343,7 +343,7 @@ public class SlidingUpPanel extends ViewGroup {
 			final float xDiff = Math.abs(x - mInitialMotionX);
 			final float yDiff = Math.abs(y - mInitialMotionY);
 			DEBUG_LOG("***Moved to " + x + "," + y + " diff=" + xDiff + "," + yDiff);
-			onTouchMove(x, y, xDiff, yDiff);
+			onTouchMove(x, y, xDiff, yDiff, true);
 			break;
 		}
 		case MotionEvent.ACTION_POINTER_UP:
@@ -381,7 +381,7 @@ public class SlidingUpPanel extends ViewGroup {
 
 		switch (action) {
 		case MotionEvent.ACTION_DOWN: {
-			onTouchDown(ev);
+			onTouchDown(ev, false);
 			DEBUG_LOG("Down at " + mLastMotionX + "," + mLastMotionY
 					+ " mIsBeingDragged=" + mIsBeingDragged
 					+ " mIsUnableToDrag=" + mIsUnableToDrag);
@@ -399,7 +399,7 @@ public class SlidingUpPanel extends ViewGroup {
 			final float xDiff = Math.abs(x - mInitialMotionX);
 			final float yDiff = Math.abs(y - mInitialMotionY);
 			DEBUG_LOG("Moved to " + x + "," + y + " diff=" + xDiff + "," + yDiff);
-			onTouchMove(x, y, xDiff, yDiff);
+			onTouchMove(x, y, xDiff, yDiff, false);
 			break;
 		}
 		case MotionEvent.ACTION_UP: {
@@ -443,30 +443,34 @@ public class SlidingUpPanel extends ViewGroup {
 		return true;
 	}
 
-	private void onTouchDown(MotionEvent ev) {
+	private void onTouchDown(MotionEvent ev, boolean intercept) {
 		// Remember location of down touch.
 		// ACTION_DOWN always refers to pointer index 0.
 		mLastMotionX = mInitialMotionX = ev.getX();
 		mLastMotionY = mInitialMotionY = ev.getY();
 		mActivePointerId = MotionEventCompat.getPointerId(ev, 0);
-		mIsUnableToDrag = false;
-
-		if (getState() == STATE_FLING) {
-			// Let the user 'catch' the pager as it animates.
-			mScroller.abortAnimation();
-			mIsBeingDragged = true;
-			requestParentDisallowInterceptTouchEvent(true);
-			setState(STATE_DRAGGING);
+		if (intercept) {
+			mIsUnableToDrag = false;
+			mScroller.computeScrollOffset();
+			if (getState() == STATE_FLING) {
+				// Let the user 'catch' the pager as it animates.
+				mScroller.abortAnimation();
+				mIsBeingDragged = true;
+				requestParentDisallowInterceptTouchEvent(true);
+				setState(STATE_DRAGGING);
+			} else {
+				completeScroll(false);
+				mIsBeingDragged = false;
+			}
 		} else {
-			completeScroll(false);
-			mIsBeingDragged = false;
+			mScroller.abortAnimation();
 		}
 	}
 
-	private void onTouchMove(float x, float y, float xDiff, float yDiff) {
+	private void onTouchMove(float x, float y, float xDiff, float yDiff, boolean intercept) {
 		if (!mIsBeingDragged) {
 			if (yDiff > mTouchSlop && yDiff * 0.5f > xDiff) {
-				DEBUG_LOG("Starting drag!!!");
+				DEBUG_LOG((intercept ? "***" : "") + "Starting drag!!!");
 				mIsBeingDragged = true;
 				requestParentDisallowInterceptTouchEvent(true);
 				setState(STATE_DRAGGING);
@@ -479,7 +483,7 @@ public class SlidingUpPanel extends ViewGroup {
 				// direction to be counted as a drag... abort
 				// any attempt to drag vertical, to work correctly
 				// with children that have scrolling containers.
-				DEBUG_LOG("Unable to drag!!!");
+				DEBUG_LOG((intercept ? "***" : "") + "Unable to drag!!!");
 				mIsUnableToDrag = true;
 			}
 		}
