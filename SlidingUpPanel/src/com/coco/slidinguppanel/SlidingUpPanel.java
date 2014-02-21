@@ -200,6 +200,12 @@ public class SlidingUpPanel extends ViewGroup {
 		}
 	}
 
+	public void openPanel() {
+		if (!isOpen()) {
+			startFling(true, 0);
+		}
+	}
+
 	public void setOnPanelCloseListener(OnPanelCloseListener onPanelCloseListener) {
 		mOnPanelCloseListener = onPanelCloseListener;
 	}
