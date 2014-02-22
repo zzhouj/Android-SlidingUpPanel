@@ -24,6 +24,8 @@ package com.coco.slidinguppanel;
  */
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.VelocityTrackerCompat;
 import android.support.v4.view.ViewCompat;
@@ -265,16 +267,19 @@ public class SlidingUpPanel extends ViewGroup {
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
 		if (getChildCount() > 1) {
 			throw new IllegalStateException("SlidingUpPanel can only contain on child view");
-		} else {
-			if (getChildCount() == 1) {
-				final View child = getChildAt(0);
-				if (child.getVisibility() != GONE) {
-					final MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
-					final int width = child.getMeasuredWidth();
-					final int height = child.getMeasuredHeight();
-					final int left = getPaddingLeft() + lp.leftMargin;
-					final int top = getPaddingTop() + lp.topMargin;
-					child.layout(left, top, left + width, top + height);
+		} else if (getChildCount() == 1) {
+			final View child = getChildAt(0);
+			if (child.getVisibility() != GONE) {
+				final MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+				final int width = child.getMeasuredWidth();
+				final int height = child.getMeasuredHeight();
+				final int left = getPaddingLeft() + lp.leftMargin;
+				final int top = getPaddingTop() + lp.topMargin;
+				child.layout(left, top, left + width, top + height);
+				if (mIsOpen) {
+					scrollTo(0, height);
+					mIsOpen = false;
+					openPanel();
 				}
 			}
 		}
@@ -704,6 +709,54 @@ public class SlidingUpPanel extends ViewGroup {
 				mEndScrollRunnable.run();
 			}
 		}
+	}
+
+	@Override
+	public void onRestoreInstanceState(Parcelable state) {
+		SavedState savedState = (SavedState) state;
+		super.onRestoreInstanceState(savedState.getSuperState());
+		mIsOpen = savedState.isOpen;
+		requestLayout();
+	}
+
+	@Override
+	public Parcelable onSaveInstanceState() {
+		Parcelable superState = super.onSaveInstanceState();
+		SavedState savedState = new SavedState(superState);
+		savedState.isOpen = mIsOpen;
+		return savedState;
+	}
+
+	static class SavedState extends BaseSavedState {
+		boolean isOpen;
+
+		public SavedState(Parcelable superState) {
+			super(superState);
+		}
+
+		private SavedState(Parcel in) {
+			super(in);
+			isOpen = in.readInt() == 1;
+		}
+
+		@Override
+		public void writeToParcel(Parcel dest, int flags) {
+			super.writeToParcel(dest, flags);
+			dest.writeInt(isOpen ? 1 : 0);
+		}
+
+		@SuppressWarnings("UnusedDeclaration")
+		public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
+			@Override
+			public SavedState createFromParcel(Parcel in) {
+				return new SavedState(in);
+			}
+
+			@Override
+			public SavedState[] newArray(int size) {
+				return new SavedState[size];
+			}
+		};
 	}
 
 }
